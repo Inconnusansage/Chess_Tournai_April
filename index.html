@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Newsletter Échiquier</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Times New Roman", serif;
+      background: #e6e6e6;
+    }
+
+    .navbar {
+      background: #0b1c5c;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .nav-btn {
+      background: #1c2f8a;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      margin: 0 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .nav-btn.active {
+      background: #f2c94c;
+      color: black;
+    }
+
+    .page {
+      display: none;
+      width: 1100px;
+      min-height: 750px; 
+      margin: 20px auto;
+      background: white;
+      padding: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: visible; 
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .title {
+      text-align: center;
+      color: #1c2f8a;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    .title p {
+      margin-top: 5px;
+      color: gray;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid #1c2f8a;
+      margin: 10px 0 10px;
+    }
+
+    .subtitle {
+      text-align: left;
+      color: #1c2f8a;
+    }
+
+    .subtitle h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    h2 {
+      color: #1c2f8a;
+      border-bottom: 2px solid #1c2f8a;
+      padding-bottom: 5px;
+    }
+
+    p {
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    strong {
+      color: #1c2f8a;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: gray;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ✅ PAGE 7 HORIZONTALE */
+   .page-7 .content {
+     display: block; /* ⬅️ casse complètement le grid */
+    }
+
+    .page-7 .content > div {
+      width: 100%;
+      margin-bottom: 40px; /* espace entre les deux blocs */
+    }
+
+    @media (max-width: 800px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+  
+  /* ÉCRAN LOGIN */
+#login-screen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0b1c5c, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.login-box {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.login-box input {
+  padding: 10px;
+  margin: 10px 0;
+  width: 200px;
+}
+
+.login-box button {
+  padding: 10px 15px;
+  background: #1c2f8a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#error {
+  color: red;
+  font-size: 14px;
+}
+
+/* ÉCRAN LOADING */
+#loading-screen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #0b1c5c, #000);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  z-index: 998;
+}
+
+.loader-box {
+  text-align: center;
+}
+
+/* ♟️ Animation */
+.chess-piece {
+  font-size: 50px;
+  margin-bottom: 15px;
+  animation: float 1.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* Barre */
+.progress-bar {
+  width: 300px;
+  height: 20px;
+  background: #1c2f8a;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+#progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #f2c94c, #ffd700);
+  box-shadow: 0 0 10px #f2c94c;
+}
+  
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <button class="nav-btn active" onclick="showPage(1)">Page 1</button>
+  <button class="nav-btn" onclick="showPage(2)">Page 2</button>
+  <button class="nav-btn" onclick="showPage(3)">Page 3</button>
+  <button class="nav-btn" onclick="showPage(4)">Page 4</button>
+  <button class="nav-btn" onclick="showPage(5)">Page 5</button>
+  <button class="nav-btn" onclick="showPage(6)">Page 6</button>
+  <button class="nav-btn" onclick="showPage(7)">Page 7</button>
+  <button class="nav-btn" onclick="showPage(8)">Page 8</button>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h2>♟️ Accès à la Newsletter</h2>
+    <input type="password" id="password" placeholder="Mot de passe...">
+    <button onclick="checkPassword()">Entrer</button>
+    <p id="error"></p>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loader-box">
+    <div class="chess-piece">♟️</div>
+    <p>Chargement...</p>
+    <div class="progress-bar">
+      <div id="progress"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Avril 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="content">
+    <div>
+  <p>Bonjour à tous,</p>
+
+  <p>
+    Bienvenue dans la <strong>deuxième newsletter de l'Échiquier Tournaisien</strong> ♟️
+  </p>
+
+  <p>
+    Dans cette édition, vous retrouverez toutes les informations concernant le club et ses membres pour les mois d'<strong>avril</strong> et <strong>mai</strong>.
+  </p>
+
+  <p><strong>📌 Voici les différentes catégories :</strong></p>
+
+  <ul>
+    <li>Résultats des compétitions internes</li>
+    <li>Bilan finale des interclubs</li>
+    <li>Résultats des compétitions externes</li>
+    <li>Classement PITCH</li>
+    <li>Open d'été et son règlement</li>
+    <li>Le site internet du club</li>
+    <li>Divers</li>
+  </ul>
+
+<p>
+  Depuis la dernière édition, j'ai ajouté un mot de passe puisque le site internet est public. 
+  J'ai également ajouté un écran de chargement afin de rendre l'interface plus agréable.
+</p>
+
+  <p>
+    Si vous remarquez des incohérences ou des éléments à améliorer, n'hésitez pas à me le faire savoir.
+  </p>
+
+  <p>
+    Sur ce, je vous souhaite une excellente lecture à tous ! 😊
+  </p>
+</div>
+<div>
+<h2>Le premier quadrimestre de l'Echiquier Tournaisien</h2>
+
+<p>
+  Ce premier quadrimestre du club d'echec (16/01 - 24/04) a debute avec une modification au format du championnat.
+</p>
+
+<p>Le format obligeant 8 membres dans le championnat A et 8 membres dans le championnat B maximum 
+  mais egalement un championnat C reformule en Open Hivernale permettant a un calendrier plus soupple
+  pour les membres souvent absent et un reglement moins stricte.
+</p>
+
+<p>Cet Open Hivernal ne prenait compte seulement les 7 premiers resultats sur 9 dates possible
+   ce qui permettait une pause a ceux qui n'etait pas disponible.
+</p>
+
+<p>
+Le championnat A et B sont des competitions FIDE qui compteront pour votre Elo FIDE du mois de Juillet.
+</p>
+
+<p>L'open Hivernale est une situation un peu exceptionnel dans le sens qu'elle devrait compter pour l'elo belge
+mais avec celui-ci qui disparait au mois de Juin, on a pas encore de reponse sur quoi faire des resultats.</p>
+
+
+</div>
+</div>
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>1</span>
+  </div>
+</div>
+
+
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Avril 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="subtitle">
+        <h1>Resultats des competitions internes</h1>
+   </div>     
+     
+  <hr> 
+          
+     <div class="content">  
+     <div>
+ <p>
+    Le championnat A a offert de belles surprises lors de ce premier quadrimestre avec la  
+    toute premiere victoire de Florian Jouvel lors de sa 4 eme edition dans la competition
+</p>
+   Une victoire merite, Florian est reste confortablement premier mais avec des risques 
+   de la perdre lors de sa derniere partie contre Jonathan. 
+<p>
+   Jonathan etant ancien laureat de cette competition en 2016 et 2021, ce n'etait pas gagne d'avance pour Florian
+</p>
+<p>
+   Meme avec ses risques, il a su garder son calme et a gagne pour remporter le championnat.
+<p>
+
+<p>
+  Petit mot de Florian : 
+</p>
+
+<p>
+A noter la belle performance de Liam qui a des chances de terminer sur le podium en cas de victoire contre Gabin
+mais egalement le nul de Jean-Pol face a Michel. 
+Le podium peut etre complete avec Jonathan en cas de victoire face a Jean-Pol
+</p>
+<p>
+Felicitations Florian !
+</p>
+</div>  
+<div>
+<p>
+Le championnat B etait de loin le championnat le plus imprevisible de ce premier quadrimestre. 
+</p>     
+<p>
+L'heureux vainqueur de cette competition est Damien Vanneste. 
+Il remporte son tout premier championnat B au club apres 2 editions avec une belle performance.
+</p>
+<p>
+Damien avait mal commencer son championnat avec une defaite face a Malo 
+mais s'est vite rattrape et s'est retrouve favoris lors du dernier match
+</p>    
+<p>Une victoire lors de ce dernier match et il etait champion mais il n'affronte pas n'importe qui. 
+Laurent,un ancien champion de ce championnat, pouvait l'en empecher 
+mais il n'a pas pu arreter Damien dans sa quete pour la victoire !</p>
+
+<p>Message de Damien : </p>
+
+<p>A noter les belles performances de Malo dans son premier championnat B 
+et egalement Esteban qui complete le podium avec Malo apres ce qui aurait ete un des meilleurs championnat B !</p>
+
+<p> Felicitations Damien !</p>
+
+
+    </div>
+  </div>
+
+<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px;">
+
+  <div style="flex:1; text-align:left;">
+    <img src="C:\Users\Liam\OneDrive\Images\Screenshots\Screenshot 2026-04-28 180336.png"
+         style="width:100%; max-width:500px; height:300px; object-fit:contain; border-radius:8px;">
+  </div>
+
+  <div style="flex:1; text-align:right;">
+    <img src="C:\Users\Liam\OneDrive\Images\Screenshots\Screenshot 2026-04-24 230919.png"
+         style="width:100%; max-width:500px; height:300px; object-fit:contain; border-radius:8px;">
+  </div>
+
+</div>
+
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>2</span>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page page-7" id="page3">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Avril 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="subtitle">
+        <h1>Resultats des competitions internes</h1>
+   </div>     
+     
+  <hr> 
+          
+     <div class="content">  
+     <div>
+<p>
+  L'open Hivernale/Championnat C fonctionnait un peu differemment que les deux autres championnats.
+</p>
+<p>
+  Etant un nouveau format de championnat avec une nouvelle cadence (1h + 30s/coup), il a servi comme test mais
+  en gardant toujours son esprit competitif.
+</p>
+<p>
+  Bien evidemment, comme les autres championnats, la premiere place 
+  remporte un trophee et celui-ci a ete remporte par Govan Chajia !
+</p>
+<p>
+  C'est le tout premier championnat de Govan apres etre arrive au club au mois de Septembre. 
+  Une realisation incroyable de sa part et une performance exceptionnel pour terminer avec un 6/7 
+  comme score finale.
+</p>
+<p>
+  Il a su se battre contre des adversaires avec beaucoup de potentiels et 
+   a montre beaucoup de calme face a la pression que ses adversaires lui inflige 
+   sur l'echiquier.
+</p>
+<p> 
+  Mot de Govan : Je suis très heureux d’avoir remporté l’Open hivernal d’échecs de notre club. 
+  J’y ai affronté des adversaires de talent, que je tiens sincèrement à remercier 
+  pour la qualité des parties disputées. 
+  J’ai particulièrement apprécié l’esprit de combativité de chacun, 
+  leur persévérance ainsi que leur fair-play tout au long du tournoi.
+  Se challenger entre nous est une vraie richesse et nous permettra sans aucun doute 
+  de progresser collectivement.
+</p>
+<p>
+A noter la magnifique performance de Theo et Paul pour venir complete ce podium. On a hate de voir ce qu'ils 
+peuvent demontrer lors de l'Open d'Ete !
+</p>
+<p>
+  Felicitations a Govan !
+</p>
+</div>  
+
+  </div>
+
+<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px;">
+
+  <div style="flex:1; text-align:left;">
+    <img src="C:\Users\Liam\OneDrive\Images\Screenshots\Screenshot 2026-04-29 100516.png"
+         style="width:100%; max-width:500px; height:300px; object-fit:contain; border-radius:8px;">
+  </div>
+
+  <div style="flex:1; text-align:right;">
+    <img src="C:\Users\Liam\OneDrive\Images\Screenshots\Screenshot 2026-04-29 104541.png"
+         style="width:100%; max-width:500px; height:300px; object-fit:contain; border-radius:8px;">
+  </div>
+</div>
+
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>3</span>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page page-7" id="page4">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Avril 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="subtitle">
+        <h1>📊Bilan finale des Interclubs</h1>
+   </div>     
+     
+  <hr> 
+          
+     <div class="content">  
+     <div>
+    
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>4</span>
+  </div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="page5">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Mars 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="subtitle">
+        <h1>🌍 Compétitions Externes</h1>
+   </div>     
+     
+  <hr> 
+          
+     <div class="content">  
+     <div>
+       <p>Le samedi 28 février a eu lieu le 9<sup>e</sup> rapide de Capelle-La-Grande, qui a réuni un total de 324 joueurs.</p>
+       
+       <p>Parmi eux, on compte la participation de <strong>Kevin M.</strong>, <strong>Damien B.</strong>, <strong>Liam P.</strong>, <strong>Esteban H.</strong> et <strong>Luka R.</strong> pour représenter le club de Tournai.</p>
+       
+       <p>Un tournoi intense a vu <strong>Kevin M.</strong> et <strong>Liam P.</strong> jouer contre des <strong>Maîtres Internationaux</strong> avec leurs parties diffusées sur écran.</p> 
+       
+       <p>À la fin de la compétition, <strong>Damien B.</strong> remporte le trophée pour <strong>meilleur joueur non-côté</strong> avec 4 points sur 9. Félicitations à lui !</p>
+
+       <p><strong>🏅 Classement final des joueurs du club</strong></p>
+<ul>
+  <li><strong>Liam P. 4/9 → 176<sup>e</sup></strong></li>
+  <li><strong>Kevin M. 4/9 → 187<sup>e</sup></strong></li>
+  <li><strong>Esteban H. 4/9 → 207<sup>e</sup></strong></li>
+  <li><strong>Damien B. 4/9 → 217<sup>e</sup></strong></li>
+  <li><strong>Luka R. 3/9 → 278<sup>e</sup></strong></li>
+</ul>
+      <p>Tous les joueurs peuvent être fiers de leur performance après la compétition féroce du tournoi.</p>
+</div>
+<div>
+<p>Vendredi 20 mars a eu lieu une rencontre au club d'échecs de Namur avec deux grands maîtres : le GM <strong>Sebastien Maze</strong> et le GM <strong>Fabien Libiszewski</strong>.</p>
+
+<p>Deux joueurs Tournaisiens ont pu tenter leur chance et les affronter lors d'une tournante face aux deux GMs : <strong>Esteban H.</strong> a affronté <strong>Fabien</strong> et <strong>Kevin M.</strong> a affronté <strong>Sebastien</strong>.</p>
+
+<p><strong>Esteban</strong> a su tenir <strong>25 coups</strong> avant d'abandonner, tandis que <strong>Kevin</strong>, sur une partie intense, a tenu <strong>40 coups</strong> après une préparation le jour même.</p>
+
+<p>Une belle expérience pour les deux joueurs de Tournai.</p>
+</div>
+</div>
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>5</span>
+  </div>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page" id="page6">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Mars 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="subtitle">
+        <h1>📊 Classement PITCH</h1>
+   </div>     
+     
+  <hr> 
+          
+     <div class="content">  
+     <div>
+       <p>Le <strong>classement PITCH</strong> est une nouveaute cette annee</p>
+       
+       <p>Il consiste a donner un certain nombre de point selon le <strong>placement des joueurs</strong> et <strong>l'importance de la competition.</strong></p>
+       
+       <p>Un trophee est reserve au meilleur joueur du PITCH a la fin de l'annee aussi nomme "Le meilleur joueur 2026 de l'echiquier tournaisien".</p> 
+       
+       <p>Le championnat A ayant des adversaires plus difficile a affronter donne plus de points que le championnat B (Mais le premier du B gagne plus que le 5 eme du A donc tout depend de la position finale du joueur).</p>
+
+       <p>Tous joueurs ayant des forfaits dans le championnat ou la coupe perd 5 points PITCH ce qui peut couter a la fin de la saison.</p>
+
+       <p>Ce systeme est utilise pour determiner qui sera dans le championnat A et dans le championnat B l'an prochain.</p>
+
+       <p>Chaque quadrimestre a une competition majeur qui donne des points selon le classement finale.</p>
+
+       <p>Ceux-ci sont les championnats, L'open Hivernal, L'Open d'Ete, La Coupe et l'Open d'Automne.</p>
+
+       <p>Les joueurs reguliers seront ceux recompense alors n'hesitez pas a venir jouer quand vous pouvez.</p>
+
+       <p>Voici le top 16 a la fin du mois de mars (rappel que seulement 8 places s'offre pour le championnat A et 8 places dans le B).</p>
+  </div>
+<div>
+<p><strong>🏅 Classement PITCH le 1er avril</strong></p>
+<ul>
+  <li><strong>Canel M. 200 pts (1er A)</strong></li>
+  <li><strong>Selimov R. 160 pts (2 eme A)</strong></li>
+  <li><strong>Jouvel F. 133 pts (3 eme A)</strong></li>
+  <li><strong>Trenteseaux M. 120 pts(1er B)</strong></li>
+  <li><strong>Drossart J. 114 pts (4 eme A)</strong></li>
+  <li><strong>Menet K. 100 pts (5 eme A)</strong></li>
+  <li><strong>Hardenne E. 96 pts (2 eme B)</strong></li>
+  <li><strong>Skowron JP. 89 pts (6 eme A)</strong></li>
+  <li><strong>Vanneste D. 80 pts (3 eme B)</strong></li>
+  <li><strong>Pitcher L. 80 pts (7 eme A)</strong></li>
+  <li><strong>Taquet G. 73 pts (8 eme A)</strong></li>
+  <li><strong>Lienart L. 69 pts (4 eme B)</strong></li>
+  <li><strong>Chajia G. 60 pts (1er C)</strong></li>
+  <li><strong>Quenoy V. 50 pts (5 eme B)</strong></li>
+  <li><strong>Marcy M. 48 pts (2 eme C)</strong></li>
+  <li><strong>Barcak G. 48 pts (7 eme B)</strong></li>
+</ul>
+<p>le 6 eme B a une penalite de 5 points pour un forfait et perd sa place.</p>
+
+<p>Ce classement comporte seulement une competition et est loin d'etre termine, si vous ne voyez pas votre nom, n'abandonner pas.</p>
+
+<p>L'Open d'Ete et la coupe/Open d'Automne peuvent etre votre chance de gagner enormement de points.</p>
+
+<p>Ce classement sera disponible prochainement pour les membres du club via le site internet du club.</p>
+
+<p>Si vous avez des questions sur ce nouveau classement, n'hesitez pas a me le demander en personne ou via l'adresse e-mail du club.</p>
+</div>
+</div>
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>6</span>
+  </div>
+</div>
+
+<!-- PAGE 7 -->
+<div class="page" id="page7">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Mars 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="subtitle">
+        <h1>Louis Vandecasteele</h1>
+   </div>     
+     
+  <hr> 
+          
+     <div class="content">  
+     <div>
+<p>C’est avec une profonde tristesse que nous annonçons le décès d’un ancien membre historique du club, <strong>Louis Vandecasteele</strong>.</p>
+
+<p>Il participait à nos compétitions depuis <strong>1990</strong>.</p>
+
+<p>Redoutable compétiteur, il a <strong>remporté à quatre reprises le championnat A, le Permanent, l’Open d’été ainsi que le Challenge Michaël Robinson (tournoi de blitz classique et traditionnel), et a également gagné la Coupe à six reprises</strong>.</p>
+
+<p>Louis a également présidé le club de 1993 à 1996.</p>
+</div>  
+<div>
+     <p>Il était aussi un <strong>joueur passionné d’interclubs</strong>, avec près de <strong>150 parties disputées entre 1990 et 2018</strong>, témoignant d’<strong>une longue et riche carrière échiquéenne</strong>.</p>
+    
+     <p>Sur le plan humain, Louis était <strong>chaleureux, bon vivant et bienveillant</strong>. Il nous manquera énormément.</p>
+
+     <p><strong>Merci, Louis</strong>, pour tout ce que tu as apporté au club et à ses membres. Un grand joueur, mais surtout un homme exceptionnel, qui ne sera jamais oublié.</p> 
+    </div>
+  </div>
+
+<div style="text-align:center;">
+  <img src="c:\Users\Liam\OneDrive\Images\Screenshots\Screenshot 2026-04-01 123749.png" alt="Louis Vandecasteele"
+       style="max-width:450px; width:100%; border-radius:8px; margin:20px 0;">
+</div>
+
+<p style="text-align:center;"><strong>Toutes nos pensées vont à sa famille et à ses proches.</strong></p>
+
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>7</span>
+  </div>
+</div>
+
+<!-- PAGE 8 -->
+<div class="page page-7" id="page8">
+  <div class="title">
+    <h1>♟️ Newsletter de l'Échiquier Tournaisien</h1>
+    <p>Mars 2026</p>
+  </div>
+
+  <hr>
+
+  <div class="content">
+    <div>
+      <h2>👥 Ambiance & entraînements</h2>
+      <p>Les cours de <strong>Michel C.</strong> continuent dans une excellente ambiance.</p>
+      <p>Que vous soyez débutant ou confirmé, tout le monde est le bienvenu pour progresser ensemble !</p>
+    </div>
+
+    <div>
+      <h2>📅 Prochains rendez-vous</h2>
+      <p>03/04 : Zodiac “qui perd gagne” (blitz)</p>
+      <p>10/04 & 17/04 : dernières manches des championnats et de l’Open Hivernal</p>
+      <p>24/04 : remise des prix + quiz de fin de quadrimestre organisé par <strong>Julien M.</strong></p>
+      <p>N’hésitez pas à venir jouer, analyser vos parties et partager un bon moment autour des échecs 😊</p>
+      <p>À bientôt au club !</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>écrit par Liam P.</span>
+    <span>8</span>
+  </div>
+</div>
+
+<script>
+  function showPage(pageNumber) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+    document.getElementById('page' + pageNumber).classList.add('active');
+    document.querySelectorAll('.nav-btn')[pageNumber - 1].classList.add('active');
+  }
+  function checkPassword() {
+  const pass = document.getElementById("password").value;
+
+  if (pass === "Open") {
+    document.getElementById("login-screen").style.display = "none";
+    startLoading();
+  } else {
+    document.getElementById("error").innerText = "Mot de passe incorrect";
+  }
+}
+
+function startLoading() {
+  const loading = document.getElementById("loading-screen");
+  const progress = document.getElementById("progress");
+
+  loading.style.display = "flex";
+
+  let width = 0;
+  let interval = setInterval(() => {
+    width += 1.5;
+    progress.style.width = width + "%";
+
+    if (width >= 100) {
+      clearInterval(interval);
+      loading.style.display = "none";
+    }
+  }, 30);
+}
+</script>
+
+</body>
+</html>
